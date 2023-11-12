@@ -7,16 +7,16 @@ pipeline {
 
     
     stages {
-        stage('Delete ECR images'){
-            steps {
-                sh "pwd"
-                sh "ls -la"
-                sh "aws ecr batch-delete-image \
-                    --repository-name demo-app-1 \
-                    --image-ids imageTag=latest"
+        // stage('Delete ECR images'){
+        //     steps {
+        //         sh "pwd"
+        //         sh "ls -la"
+        //         sh "aws ecr batch-delete-image \
+        //             --repository-name demo-app-1 \
+        //             --image-ids imageTag=latest"
 
-            }
-        }
+        //     }
+        // }
 
         stage('Delete Docker images'){
             steps {
