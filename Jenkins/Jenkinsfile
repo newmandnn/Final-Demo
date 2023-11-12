@@ -99,8 +99,8 @@ pipeline {
                 echo 'Datadog install on K8s cluster'
                 sh "pwd && ls -la"
                 sh '''helm repo add datadog https://helm.datadoghq.com'''
-                sh '''helm install my-datadog-operator datadog/datadog-operator'''
-                sh ''' kubectl create secret generic datadog-secret --from-literal api-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."apikey") --from-literal app-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."appkey") '''
+                //sh '''helm install my-datadog-operator datadog/datadog-operator'''
+                //sh ''' kubectl create secret generic datadog-secret --from-literal api-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."apikey") --from-literal app-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."appkey") '''
                 sh ''' cd Monitoring && kubectl apply -f datadog-agent.yaml ''' 
             }
         }
