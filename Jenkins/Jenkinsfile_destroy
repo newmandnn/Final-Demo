@@ -27,11 +27,12 @@ pipeline {
             }
         }
 
-        stage('Delete Deployments and Services'){
+        stage('Delete K8s/Helm resources'){
             steps {
                 sh "pwd"
                 sh "ls -la"
-                sh "cd kubernetes && kubectl delete -f app.yml"
+                sh "kubectl delete datadogagent datadog"
+                sh "helm delete my-datadog-operator"
 
             }
         }
