@@ -8,7 +8,7 @@ metadata:
 spec:
   destination:
     name: in-cluster
-    namespace: app1
+    #namespace: app1
   source:
     path: "HelmChart/"
     repoURL: "git@github.com:newmandnn/Final-Demo.git"
