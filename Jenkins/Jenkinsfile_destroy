@@ -41,8 +41,8 @@ pipeline {
             steps {
                 sh "pwd"
                 sh "ls -la"
-                sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve'''
-
+                sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve -target=module.eks'''
+                sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve -target=module.network'''
             }
         }
     }
