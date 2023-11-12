@@ -10,7 +10,7 @@ pipeline {
         stage('Terraform init'){
             steps {
                 echo "In this stage we initializate Terraform"
-                sh '''cd terraform && terraform init'''
+                sh '''cd Terraform && terraform init'''
 
             }
         }
@@ -18,7 +18,7 @@ pipeline {
         stage('Terraform build ECR'){
             steps {
                 echo "In this stage we initializate ECR"
-                sh '''cd terraform && terraform apply --auto-approve -target=module.ecr'''
+                sh '''cd Terraform && terraform apply --auto-approve -target=module.ecr'''
 
             }
         }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 echo 'Building Network'
                 sh "pwd && ls -la"
-                sh '''cd terraform && terraform apply --auto-approve -target=module.network'''
+                sh '''cd Terraform && terraform apply --auto-approve -target=module.network'''
                 
                 
             }
@@ -47,7 +47,7 @@ pipeline {
             steps {
                 echo 'Building EKS'
                 sh "pwd && ls -la"
-                sh '''cd terraform && terraform apply --auto-approve -target=module.eks'''
+                sh '''cd Terraform && terraform apply --auto-approve -target=module.eks'''
                 sleep 10
                 
             }
@@ -67,7 +67,7 @@ pipeline {
             steps {
                 echo 'Building and Creating ArgoCD resources in EKS cluster'
                 sh "pwd && ls -la"
-                sh '''cd terraform && terraform apply --auto-approve -target=module.argocd_demo'''
+                sh '''cd Terraform && terraform apply --auto-approve -target=module.argocd_demo'''
                 sleep 10
                 
             }
@@ -77,7 +77,7 @@ pipeline {
             steps {
                 echo 'Building ArgoCD root manager'
                 sh "pwd && ls -la"
-                sh '''cd terraform && terraform apply --auto-approve -target=module.argocd_demo_root'''
+                sh '''cd Terraform && terraform apply --auto-approve -target=module.argocd_demo_root'''
                 sleep 10
                 
             }
