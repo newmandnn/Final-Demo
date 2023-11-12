@@ -7,16 +7,16 @@ pipeline {
 
     
     stages {
-        // stage('Delete ECR images'){
-        //     steps {
-        //         sh "pwd"
-        //         sh "ls -la"
-        //         sh "aws ecr batch-delete-image \
-        //             --repository-name demo-app-1 \
-        //             --image-ids imageTag=latest"
+        stage('Delete ECR images'){
+            steps {
+                sh "pwd"
+                sh "ls -la"
+                sh "aws ecr batch-delete-image \
+                    --repository-name demo-app-1 \
+                    --image-ids imageTag=latest"
 
-        //     }
-        // }
+            }
+        }
 
         stage('Delete Docker images'){
             steps {
@@ -27,22 +27,21 @@ pipeline {
             }
         }
 
-        // stage('Delete K8s/Helm resources'){
-        //     steps {
-        //         sh "pwd"
-        //         sh "ls -la"
-        //         sh "kubectl delete datadogagent datadog"
-        //         sh "helm delete my-datadog-operator"
+        stage('Delete K8s/Helm resources'){
+            steps {
+                sh "pwd"
+                sh "ls -la"
+                sh "kubectl delete datadogagent datadog"
+                sh "helm delete my-datadog-operator"
 
-        //     }
-        // }
+            }
+        }
 
         stage('Terraform destroy'){
             steps {
                 sh "pwd"
                 sh "ls -la"
-                //sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve -target=module.eks'''
-                sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve -target=module.network'''
+                sh '''cd ../Final_Demo_Build/Terraform && ls -la && terraform destroy --auto-approve '''
             }
         }
     }
