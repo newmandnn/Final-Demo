@@ -27,15 +27,15 @@ pipeline {
             }
         }
 
-        stage('Delete K8s/Helm resources'){
-            steps {
-                sh "pwd"
-                sh "ls -la"
-                sh "kubectl delete datadogagent datadog"
-                sh "helm delete my-datadog-operator"
+        // stage('Delete K8s/Helm resources'){
+        //     steps {
+        //         sh "pwd"
+        //         sh "ls -la"
+        //         sh "kubectl delete datadogagent datadog"
+        //         sh "helm delete my-datadog-operator"
 
-            }
-        }
+        //     }
+        // }
 
         stage('Terraform destroy'){
             steps {
