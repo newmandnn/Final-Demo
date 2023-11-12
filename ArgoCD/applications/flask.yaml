@@ -11,7 +11,7 @@ spec:
     namespace: app1
   source:
     path: "HelmChart/"
-    repoURL: "git@github.com:newmandnn/Final-Demo.git"
+    repoURL: "git@github.com:newmandnn/ArgoCD.git"
     targetRevision: HEAD
     helm:
       valueFiles:
