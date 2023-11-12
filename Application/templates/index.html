@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DevOps Best Practises</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        <h1>DevOps Best Practises</h1>
+        <blockquote>
+            <p>{{ quote }}</p>
+        </blockquote>
+        {% if build_number %}
+        <p>Build Number: {{ build_number }}</p>
+        {% endif %}
+    </div>
+</body>
+
+</html>

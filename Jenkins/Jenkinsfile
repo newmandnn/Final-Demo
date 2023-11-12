@@ -1,0 +1,125 @@
+pipeline {
+    agent any
+
+    tools {
+        terraform 'terraform_new'
+    }
+
+    
+    stages {
+        stage('Terraform init'){
+            steps {
+                echo "In this stage we initializate Terraform"
+                sh '''cd terraform && terraform init'''
+
+            }
+        }
+
+        stage('Terraform build ECR'){
+            steps {
+                echo "In this stage we initializate ECR"
+                sh '''cd terraform && terraform apply --auto-approve -target=module.ecr'''
+
+            }
+        }
+
+        stage('Build/Push Docker image to ECR'){
+            steps {
+                echo "In this stage we build Docker image and push it to ECR"
+                sh  "aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 877879097973.dkr.ecr.eu-central-1.amazonaws.com" 
+                sh  "docker build -t demo-app Application/." 
+                sh  "docker tag demo-app:latest 877879097973.dkr.ecr.eu-central-1.amazonaws.com/demo-app:latest" 
+                sh  "docker push 877879097973.dkr.ecr.eu-central-1.amazonaws.com/demo-app:latest" 
+            }
+        }
+
+        stage('Build Network resources in AWS') {
+            steps {
+                echo 'Building Network'
+                sh "pwd && ls -la"
+                sh '''cd terraform && terraform apply --auto-approve -target=module.network'''
+                
+                
+            }
+        }
+        
+        stage('Build EKS resources in AWS') {
+            steps {
+                echo 'Building EKS'
+                sh "pwd && ls -la"
+                sh '''cd terraform && terraform apply --auto-approve -target=module.eks'''
+                sleep 10
+                
+            }
+        }
+
+        // stage('Build RDS resources in AWS') {
+        //     steps {
+        //         echo 'Building Network + EKS Cluster'
+        //         sh "pwd && ls -la"
+        //         sh '''cd terraform && terraform apply --auto-approve -target=module.rds'''
+        //         sleep 10
+                
+        //     }
+        // }
+
+        stage('Build ArgoCD') {
+            steps {
+                echo 'Building and Creating ArgoCD resources in EKS cluster'
+                sh "pwd && ls -la"
+                sh '''cd terraform && terraform apply --auto-approve -target=module.argocd_demo'''
+                sleep 10
+                
+            }
+        }
+
+        stage('Build ArgoCD root') {
+            steps {
+                echo 'Building ArgoCD root manager'
+                sh "pwd && ls -la"
+                sh '''cd terraform && terraform apply --auto-approve -target=module.argocd_demo_root'''
+                sleep 10
+                
+            }
+        }
+
+        stage('Update EKS Kubeconfig') {
+            steps {
+                echo 'Updating using AWS_CLI...'
+                sh "pwd && ls -la"
+                sh '''aws eks update-kubeconfig --name Demo-3 --region eu-central-1'''
+                sh '''eksctl utils write-kubeconfig --cluster=Demo-3 --region=eu-central-1'''
+                
+                
+            }
+        }
+
+        stage('Monitoring configuration') {
+            steps {
+                echo 'Datadog install on K8s cluster'
+                sh "pwd && ls -la"
+                sh '''helm repo add datadog https://helm.datadoghq.com'''
+                sh '''helm install my-datadog-operator datadog/datadog-operator'''
+                sh ''' kubectl create secret generic datadog-secret --from-literal api-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."apikey") --from-literal app-key=$(aws secretsmanager get-secret-value --secret-id secret/datadog --version-stage AWSCURRENT | jq --raw-output .SecretString | jq -r ."appkey") '''
+                sh ''' cd Monitoring/datadog-agent.yaml ''' 
+            }
+        }
+
+        stage('Check services for ArgoCD'){
+            steps {
+                sh "pwd"
+                sh "ls -la"
+                sh "kubectl get svc -n argocd"
+
+            }
+        }
+
+        stage('Make commit in GitHub!') {
+            steps {
+                echo 'Now you need to add your manifests to Github and ArgoCD automatically deploy it to EKS cluster'
+                echo 'End of pipeline!'
+                
+            }
+        }
+    }
+}

@@ -1,0 +1,6 @@
+# Demo Override Values for my Helm Chart
+
+container:
+  image: 877879097973.dkr.ecr.eu-central-1.amazonaws.com/demo-app
+
+replicaCount: 2

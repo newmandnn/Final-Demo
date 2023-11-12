@@ -1,0 +1,65 @@
+# ---
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: demo-namespace
+# ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-eks
+  #namespace: demo-namespace
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eksdemo
+  template:
+    metadata:
+      labels:
+        app: eksdemo
+    spec:
+      containers:
+        - name: flask-app
+          image: 877879097973.dkr.ecr.eu-central-1.amazonaws.com/demo-app
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-eks
+  #namespace: demo-namespace
+spec:
+  type: NodePort
+  selector:
+    app: eksdemo
+  ports:
+    #    - nodePort: 31479 #external traffic
+    - port: 5000 #port of this service. Cluster members talk via this port
+      targetPort: 5000 #where container is actually running
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo-eks
+  #namespace: demo-namespace
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:eu-central-1:877879097973:certificate/0a06e914-8d14-4794-ad17-ad4943010a29
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+spec:
+  ingressClassName: alb
+  rules:
+    - host: flask.nazar-rybak-demo.pp.ua
+      http:
+        paths:
+          - path: /
+            pathType: Exact
+            backend:
+              service:
+                name: demo-eks
+                port:
+                  number: 5000

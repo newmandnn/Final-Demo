@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo-app
+  template:
+    metadata:
+      labels:
+        app: demo-app
+    spec:
+      containers:
+        - name: demo-app-container
+          image: 877879097973.dkr.ecr.eu-central-1.amazonaws.com/demo-app
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  labels:
+    env: demo
+    owner: NazarRybak
+spec:
+  selector:
+    #app: app-deployment
+    app: demo-app
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: LoadBalancer
