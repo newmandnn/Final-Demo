@@ -10,8 +10,8 @@ spec:
     name: in-cluster
     namespace: argocd
   source:
-    path: "ArgoCD/applications"
-    repoURL: "git@github.com:newmandnn/Final-Demo.git"
+    path: "manifests/applications"
+    repoURL: "git@github.com:newmandnn/ArgoCD.git"
     targetRevision: HEAD
   project: default
   syncPolicy:
